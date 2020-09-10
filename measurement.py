@@ -22,11 +22,11 @@ def measurement():
 
     data = "\n{},{},{}".format(time.hour*60+time.minute, humidity, temperature)
     if os.path.isfile(file_name):
-	with open(file_name, "a") as f:
-	    f.write(data)
+	    with open(file_name, "a") as f:
+	        f.write(data)
     else:
-	with open(file_name, "w") as f:
-	    f.write(",humidity,temperature{}".format(data))
+	    with open(file_name, "w") as f:
+	        f.write(",humidity,temperature{}".format(data))
 
 def make_graph():
     #with open() as f:
