@@ -7,6 +7,9 @@ verify_ssl = true
 
 [packages]
 adafruit-dht = "*"
+matplotlib = "*"
+pytz = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.8"
