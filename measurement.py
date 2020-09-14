@@ -5,15 +5,25 @@
 """
 
 from pathlib import Path
-import Adafruit_DHT as dht
 import matplotlib.pyplot as plt
+import RPi.GPIO as GPIO
 import datetime as dt
-import os
+import dht22, os, time
+
+def get_data(pin):
+    GPIO.setmode(GPIO.BCM)
+    instance = dht22.DHT22(pin)
+    while True:
+        result = instance.read()
+        if result.is_valid():
+            GPIO.cleanup()
+            return(result.temperature, result.humidity)
+        time.sleep(6)
 
 def measurement():
-    humidity, temperature = dht.read_retry(dht.AM2302, 2)
-    #print("湿度:\t{:.1f}%".format(humidity))
-    #print("温度:\t{:.1f}℃".format(temperature))
+    temperature, humidity = get_data(17)
+    print("湿度:\t{:.1f}%".format(humidity))
+    print("温度:\t{:.1f}℃".format(temperature))
     tz = dt.timezone(dt.timedelta(hours=+9), "Asia/Tokyo")
     time = dt.datetime.now(tz).time()
 
