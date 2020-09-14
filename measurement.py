@@ -8,6 +8,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import RPi.GPIO as GPIO
 import datetime as dt
+import pandas as pd
 import dht22, os, time
 
 def get_data(pin):
@@ -39,14 +40,19 @@ def measurement():
 	        f.write(",humidity,temperature{}".format(data))
 
 def make_graph():
-    #with open() as f:
-    #    reader = csv.reader(f)
+    file_name = "{}.csv".format(dt.date.today())
+    file_name = Path(__file__).parent.resolve() / "data" / file_name
+    df = pd.read_csv(file_name, index_col=0)
     plt.figure()
-    plt.savefig(graph.png)
+    plt.plot(df)
+    #plt.legend()
+    file_name = Path(__file__).parent.resolve() / "graph.png"
+    plt.savefig(file_name)
+    plt.close()
 
 def main():
     measurement()
-    #make_graph()
+    make_graph()
 
 if __name__ == "__main__":
     main()
