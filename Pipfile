@@ -6,10 +6,9 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-adafruit-dht = "*"
 matplotlib = "*"
-pytz = "*"
 pandas = "*"
+"rpi.gpio" = "*"
 
 [requires]
 python_version = "3.8"
