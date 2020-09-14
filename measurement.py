@@ -22,8 +22,8 @@ def get_data(pin):
 
 def measurement():
     temperature, humidity = get_data(17)
-    print("湿度:\t{:.1f}%".format(humidity))
-    print("温度:\t{:.1f}℃".format(temperature))
+    #print("湿度:\t{:.1f}%".format(humidity))
+    #print("温度:\t{:.1f}℃".format(temperature))
     tz = dt.timezone(dt.timedelta(hours=+9), "Asia/Tokyo")
     time = dt.datetime.now(tz).time()
 
