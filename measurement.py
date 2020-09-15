@@ -44,6 +44,7 @@ def make_graph():
     file_name = Path(__file__).parent.resolve() / "data" / file_name
     df = pd.read_csv(file_name, index_col=0)
     plt.figure()
+    plt.title("temperature and humidity on the {}".format(dt.date.today()))
     plt.plot(df)
     #plt.legend()
     file_name = Path(__file__).parent.resolve() / "graph.png"
