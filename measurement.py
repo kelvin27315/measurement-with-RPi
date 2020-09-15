@@ -6,10 +6,10 @@
 
 from pathlib import Path
 import matplotlib.pyplot as plt
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import datetime as dt
 import pandas as pd
-import dht22, os, time
+#import dht22, os, time
 
 def get_data(pin):
     GPIO.setmode(GPIO.BCM)
@@ -43,16 +43,35 @@ def make_graph():
     file_name = "{}.csv".format(dt.date.today())
     file_name = Path(__file__).parent.resolve() / "data" / file_name
     df = pd.read_csv(file_name, index_col=0)
-    plt.figure()
-    plt.title("temperature and humidity on the {}".format(dt.date.today()))
-    plt.plot(df)
-    #plt.legend()
+    fig, ax = plt.subplots(2,1)
+    fig.suptitle("Temperature and Humidity on the {}".format(dt.date.today()))
+    ax[0].plot(df["temperature"], label="Temperature")
+    ax[0].set_title("Temperature")
+    ax[0].set_ylabel("temperature")
+    ax[0].legend()
+    ax[0].grid(True)
+    #ax[0].set_yticklabels(["{}C".format(int(t)) if t.is_integer() else "{}C".format(t) for t in plt.yticks()[0]])
+
+    ax[1].plot(df["humidity"], label="Humidity")
+    ax[1].set_title("Humidity")
+    ax[1].set_xlabel("time")
+    ax[1].set_ylabel("humidity")
+    ax[1].legend()
+    ax[1].grid(True)
+    label = ["{}:00".format(int(t/60)) if t%60 == 0 else "{}:{}".format(int(t/60),int(t%60)) for t in plt.xticks()[0]]
+    ax[0].set_xticks(plt.xticks()[0])
+    ax[0].set_xticklabels(label)
+    ax[1].set_xticks(plt.xticks()[0])
+    ax[1].set_xticklabels(label)
+    ax[1].set_yticks(plt.yticks()[0])
+    ax[1].set_yticklabels(["{}%".format(int(t)) if t.is_integer() else "{}%".format(t) for t in plt.yticks()[0]])
+    fig.tight_layout()
     file_name = Path(__file__).parent.resolve() / "graph.png"
     plt.savefig(file_name)
     plt.close()
 
 def main():
-    measurement()
+    #measurement()
     make_graph()
 
 if __name__ == "__main__":
