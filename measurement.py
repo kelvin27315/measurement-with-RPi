@@ -18,7 +18,7 @@ class Measurement():
 
     def measurement(self):
         d = adafruit_dht.DHT22(D17)
-        file_name = self.get_csv_file_name(self.today())
+        file_name = self.get_csv_file_name(self.today)
 
         t = dt.datetime.now(dt.timezone(dt.timedelta(hours=+9), "Asia/Tokyo")).time()
         data = "\n{},{},{}".format(t.hour*60+t.minute, d.humidity, d.temperature)
