@@ -45,20 +45,22 @@ class Measurement():
         fig, axs = plt.subplots(2,1, figsize=(7,6))
         fig.suptitle("Temperature and Humidity on the {}".format(self.today))
         last_time = df.index.values[-1]
+        return_unit = {"Temperature":"C", "Humidity":"%"}
         for ax, title in zip(axs, ("Temperature", "Humidity")):
             ax.plot(df[title.lower()], label=title)
+            yticks = ax.get_yticks()
             ax.set_title(title)
-            ax.set_ylabel(title)
             ax.set_xlabel("time")
             ax.set_xlim(last_time - 1440, last_time)
+            ax.set_xticks(ax.get_xticks())
+            ax.set_xticklabels(self.rename_xticklabes(ax.get_xticks()))
+            ax.set_ylabel(title)
+            ax.set_ylim(yticks[0],yticks[-1])
+            ax.set_yticks(ax.get_yticks())
+            ax.set_yticklabels([str(int(t))+return_unit[title] if t.is_integer() else str(t)+return_unit[title] for t in ax.get_yticks()])
+            ax.vlines(1440, yticks[0], yticks[-1], "red", "dashed")
             ax.legend()
             ax.grid(True)
-            ax.set_xticks(ax.get_xticks())
-            ax.set_yticks(ax.get_yticks())
-            ax.set_xticklabels(self.rename_xticklabes(ax.get_xticks()))
-
-        axs[0].set_yticklabels(["{}C".format(int(t)) if t.is_integer() else "{}C".format(t) for t in axs[0].get_yticks()])
-        axs[1].set_yticklabels(["{}%".format(int(t)) if t.is_integer() else "{}%".format(t) for t in axs[1].get_yticks()])
         fig.tight_layout()
         file_name = Path(__file__).parent.resolve() / "graph.png"
         plt.savefig(file_name)
