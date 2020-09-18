@@ -9,6 +9,7 @@ verify_ssl = true
 matplotlib = "*"
 pandas = "*"
 "rpi.gpio" = "*"
+adafruit-circuitpython-dht = "*"
 
 [requires]
 python_version = "3.8"

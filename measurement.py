@@ -5,24 +5,16 @@
 """
 
 from pathlib import Path
+from board import D17
 import matplotlib.pyplot as plt
-#import RPi.GPIO as GPIO
 import datetime as dt
 import pandas as pd
-#import dht22, os, time
-
-def get_data(pin):
-    GPIO.setmode(GPIO.BCM)
-    instance = dht22.DHT22(pin)
-    while True:
-        result = instance.read()
-        if result.is_valid():
-            GPIO.cleanup()
-            return(result.temperature, result.humidity)
-        time.sleep(6)
+import adafruit_dht, os, time
 
 def measurement():
-    temperature, humidity = get_data(17)
+    dht_device = adafruit_dht.DHT22(D17)
+    temperature = dht_device.temperature
+    humidity = dht_device.humidity
     #print("湿度:\t{:.1f}%".format(humidity))
     #print("温度:\t{:.1f}℃".format(temperature))
     tz = dt.timezone(dt.timedelta(hours=+9), "Asia/Tokyo")
@@ -71,7 +63,7 @@ def make_graph():
     plt.close()
 
 def main():
-    #measurement()
+    measurement()
     make_graph()
 
 if __name__ == "__main__":
