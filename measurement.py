@@ -28,6 +28,14 @@ class Measurement():
         with open(file_name, "a") as f:
             f.write(data)
 
+    def read_csv(self):
+        if os.path.isfile(self.get_csv_file_name(self.yesterday)):
+            df = pd.concat([pd.read_csv(self.get_csv_file_name(self.yesterday), index_col=0),
+                            pd.read_csv(self.get_csv_file_name(self.today), index_col=0).rename(index=lambda i: i+1440)])
+        else:
+            df = pd.read_csv(self.get_csv_file_name(self.today), index_col=0).rename(index=lambda i: i+1440)
+        return(df)
+
     def rename_xticklabes(self, old_label):
         new_label = [""] * len(old_label)
         for i,time in enumerate(old_label):
@@ -40,8 +48,7 @@ class Measurement():
         return(new_label)
 
     def make_graph(self):
-        df = pd.concat([pd.read_csv(self.get_csv_file_name(self.yesterday), index_col=0),
-                        pd.read_csv(self.get_csv_file_name(self.today), index_col=0).rename(index=lambda i: i+1440)])
+        df = self.read_csv()
         fig, axs = plt.subplots(2,1, figsize=(7,6))
         fig.suptitle("Temperature and Humidity on the {}".format(self.today))
         last_time = df.index.values[-1]
