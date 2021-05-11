@@ -64,7 +64,7 @@ class Measurement():
             ax.set_ylabel(title)
             ax.set_ylim(yticks[0],yticks[-1])
             ax.set_yticks(ax.get_yticks())
-            ax.set_yticklabels([str(int(t))+return_unit[title] if t.is_integer() else str(t)+return_unit[title] for t in ax.get_yticks()])
+            ax.set_yticklabels([str(round(t,1))+return_unit[title] for t in ax.get_yticks()])
             ax.vlines(1440, yticks[0], yticks[-1], "red", "dashed")
             ax.legend()
             ax.grid(True)
