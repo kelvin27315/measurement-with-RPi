@@ -1,74 +1,12 @@
-#!/usr/bin/env python
+import adafruit_dht, board
 
-from pathlib import Path
-from board import D17
-import matplotlib.pyplot as plt
-import datetime as dt
-import pandas as pd
-import adafruit_dht, os, time
 
 class Measurement():
-    def __init__(self):
-        self.path = Path(__file__).parent.resolve()
-        self.today = dt.date.today()
-        self.yesterday = self.today - dt.timedelta(days=1)
+    def __init__(self, pin:board.pin ):
+        self.d = adafruit_dht.DHT22(pin)
 
-    def get_csv_file_name(self, day):
-        return(self.path / "data" / "{}.csv".format(day))
+    def get_humidity(self):
+        return(self.d.humidity)
 
-    def measurement(self):
-        d = adafruit_dht.DHT22(D17)
-        file_name = self.get_csv_file_name(self.today)
-
-        t = dt.datetime.now(dt.timezone(dt.timedelta(hours=+9), "Asia/Tokyo")).time()
-        data = "\n{},{},{}".format(t.hour*60+t.minute, d.humidity, d.temperature)
-        if not os.path.isfile(file_name):
-            data = ",humidity,temperature" + data
-
-        with open(file_name, "a") as f:
-            f.write(data)
-
-    def read_csv(self):
-        if os.path.isfile(self.get_csv_file_name(self.yesterday)):
-            df = pd.concat([pd.read_csv(self.get_csv_file_name(self.yesterday), index_col=0),
-                            pd.read_csv(self.get_csv_file_name(self.today), index_col=0).rename(index=lambda i: i+1440)])
-        else:
-            df = pd.read_csv(self.get_csv_file_name(self.today), index_col=0).rename(index=lambda i: i+1440)
-        return(df)
-
-    def rename_xticklabes(self, old_label):
-        new_label = [""] * len(old_label)
-        for i,time in enumerate(old_label):
-            if time < 1440:
-                day = "{}-{}".format(self.yesterday.month, self.yesterday.day)
-            else:
-                day = "{}-{}".format(self.today.month, self.today.day)
-                time -= 1440
-            new_label[i] = "{}\n{}:00".format(day, int(time/60)) if time%60 == 0 else "{}\n{}:{}".format(day, int(time/60),int(time%60))
-        return(new_label)
-
-    def make_graph(self):
-        df = self.read_csv()
-        fig, axs = plt.subplots(2,1, figsize=(7,6))
-        fig.suptitle("Temperature and Humidity on the {}".format(self.today))
-        last_time = df.index.values[-1]
-        return_unit = {"Temperature":"C", "Humidity":"%"}
-        for ax, title in zip(axs, ("Temperature", "Humidity")):
-            ax.plot(df[title.lower()], label=title)
-            yticks = ax.get_yticks()
-            ax.set_title(title)
-            ax.set_xlabel("time")
-            ax.set_xlim(last_time - 1440, last_time)
-            ax.set_xticks(ax.get_xticks())
-            ax.set_xticklabels(self.rename_xticklabes(ax.get_xticks()))
-            ax.set_ylabel(title)
-            ax.set_ylim(yticks[0],yticks[-1])
-            ax.set_yticks(ax.get_yticks())
-            ax.set_yticklabels([str(round(t,1))+return_unit[title] for t in ax.get_yticks()])
-            ax.vlines(1440, ax.get_yticks()[0], ax.get_yticks()[-1], "red", "dashed")
-            ax.legend()
-            ax.grid(True)
-        fig.tight_layout()
-        file_name = Path(__file__).parent.resolve() / "graph.png"
-        plt.savefig(file_name)
-        plt.close()
+    def get_temperature(self):
+        return(self.d.temperature)
