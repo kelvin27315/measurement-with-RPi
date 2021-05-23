@@ -72,11 +72,3 @@ class Measurement():
         file_name = Path(__file__).parent.resolve() / "graph.png"
         plt.savefig(file_name)
         plt.close()
-
-def main():
-    m = Measurement()
-    m.measurement()
-    m.make_graph()
-
-if __name__ == "__main__":
-    main()
